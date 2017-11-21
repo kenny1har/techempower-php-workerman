@@ -14,6 +14,7 @@ $http_worker = new Worker("http://0.0.0.0:8080");
 $http_worker->count = 8;
 $http_worker->onMessage = function($connection, $data)
 {
+  Http::header("Date: ".gmdate("D, d M Y H:i:s", time())." GMT"); 
   if ($_SERVER['REQUEST_URI'] == '/fortune.php') {
     ob_start();
     fortune($pdo);
