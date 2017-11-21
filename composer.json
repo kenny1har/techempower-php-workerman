@@ -1,4 +1,5 @@
 {
 	"require": {
+		"workerman/workerman": "^3.5"
 	}
 }
