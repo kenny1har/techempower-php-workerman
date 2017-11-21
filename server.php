@@ -10,27 +10,37 @@ $pdo = new PDO('mysql:host=TFB-database;dbname=hello_world;charset=utf8', 'bench
   PDO::ATTR_PERSISTENT => true
 ));
 
+function get_processor_cores_number() {
+  $command = 'cat /proc/cpuinfo | grep processor | wc -l';
+  return  (int) shell_exec($command);
+}
+
 $http_worker = new Worker("http://0.0.0.0:8080");
-$http_worker->count = 8;
+$http_worker->count = get_processor_cores_number() * 2 || 8;
 $http_worker->onMessage = function($connection, $data)
 {
+  $base = $_SERVER['REQUEST_URI'];
+  $question = strpos($base, '?');
+  if ($question !== false) {
+    $base = substr($base, 0, $question);
+  }
   Http::header('Date: '.gmdate('D, d M Y H:i:s', time()).' GMT'); 
-  if ($_SERVER['REQUEST_URI'] == '/fortune.php') {
+  if ($base == '/fortune.php') {
     ob_start();
     fortune($pdo);
     $connection->send(ob_get_clean());
-  } else if ($_SERVER['REQUEST_URI'] == '/dbraw.php') {
+  } else if ($base == '/dbraw.php') {
     ob_start();
     fortune($pdo);
     $connection->send(ob_get_clean());
-  } else if ($_SERVER['REQUEST_URI'] == '/updateraw.php') {
+  } else if ($base == '/updateraw.php') {
     ob_start();
     updateraw($pdo);
     $connection->send(ob_get_clean());
-  } else if ($_SERVER['REQUEST_URI'] == '/plaintext.php') {
+  } else if ($base == '/plaintext.php') {
     Http::header("Content-type: text/plain");
     $connection->send('Hello, World!');
-  } else if ($_SERVER['REQUEST_URI'] == '/json.php') {
+  } else if ($base == '/json.php') {
     Http::header("Content-type: application/json");
     $connection->send(json_encode(['message'=>'Hello, World!']));
   }
