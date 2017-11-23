@@ -6,10 +6,6 @@ require_once __DIR__ . '/updateraw.php';
 use Workerman\Worker;
 use Workerman\Protocols\Http;
 
-$pdo = new PDO('mysql:host=TFB-database;dbname=hello_world;charset=utf8', 'benchmarkdbuser', 'benchmarkdbpass', array(
-  PDO::ATTR_PERSISTENT => true
-));
-
 function get_processor_cores_number() {
   $command = 'cat /proc/cpuinfo | grep processor | wc -l';
   return  (int) shell_exec($command);
@@ -19,6 +15,11 @@ $http_worker = new Worker("http://0.0.0.0:8080");
 $http_worker->count = get_processor_cores_number() * 2 || 8;
 $http_worker->onMessage = function($connection, $data)
 {
+
+$pdo = new PDO('mysql:host='.(isset($_ENV['DBHOST'])?$_ENV['DBHOST']:'127.0.0.1').';dbname=hello_world;charset=utf8', 
+'benchmarkdbuser', 'benchmarkdbpass', array(
+  PDO::ATTR_PERSISTENT => true
+));
   $base = $_SERVER['REQUEST_URI'];
   $question = strpos($base, '?');
   if ($question !== false) {
