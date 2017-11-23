@@ -32,7 +32,7 @@ $pdo = new PDO('mysql:host='.(isset($_ENV['DBHOST'])?$_ENV['DBHOST']:'127.0.0.1'
     $connection->send(ob_get_clean());
   } else if ($base == '/dbraw.php') {
     ob_start();
-    fortune($pdo);
+    dbraw($pdo);
     $connection->send(ob_get_clean());
   } else if ($base == '/updateraw.php') {
     ob_start();
