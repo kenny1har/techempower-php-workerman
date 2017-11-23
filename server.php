@@ -38,10 +38,13 @@ $http_worker->onMessage = function($connection, $data)
     updateraw($pdo);
     $connection->send(ob_get_clean());
   } else if ($base == '/plaintext.php') {
-    Http::header("Content-type: text/plain");
+    Http::header("Content-Type: text/plain");
     $connection->send('Hello, World!');
   } else if ($base == '/json.php') {
-    Http::header("Content-type: application/json");
+    Http::header("Content-Type: application/json");
+    $connection->send(json_encode(['message'=>'Hello, World!']));
+  } else {
+    Http::header("Content-Type: application/json");
     $connection->send(json_encode(['message'=>'Hello, World!']));
   }
 };

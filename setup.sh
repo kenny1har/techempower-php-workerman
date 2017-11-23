@@ -1,5 +1,5 @@
 #!/bin/bash
 
-fw_depends mysql php7 nginx composer
+fw_depends mysql php7 composer
 
-php $TROOT/server.php start
+php $TROOT/server.php start -d
